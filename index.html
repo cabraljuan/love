@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Para ti, mi amor</title>
+  <style>
+    /* Estilos generales */
+    body {
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    /* Área de juego que ocupa toda la ventana */
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    /* Estilo para cada corazón */
+    .heart {
+      position: absolute;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .heart:hover {
+      transform: scale(1.2);
+    }
+    /* Mensaje secreto que se mostrará al final */
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: #fff;
+      display: none;
+    }
+    /* Instrucciones para el juego */
+    #instructions {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      color: #fff;
+      background: rgba(0,0,0,0.2);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Instrucciones para la persona -->
+  <div id="instructions">Haz clic en todos los corazones para descubrir mi secreto...</div>
+  
+  <!-- Área de juego -->
+  <div id="game">
+    <!-- Mensaje que se mostrará al terminar -->
+    <div id="message">¡Te amo!</div>
+  </div>
+  
+  <script>
+    // Configuración del juego
+    const totalHearts = 10; // Número total de corazones a encontrar
+    let clickedHearts = 0;
+    const gameArea = document.getElementById('game');
+
+    // Función para crear un corazón en una posición aleatoria
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.textContent = '❤️'; // Puedes cambiar el emoji o usar imágenes
+      // Calcular posición aleatoria dentro de la ventana
+      const x = Math.random() * (window.innerWidth - 50); // margen para evitar que se salga de la pantalla
+      const y = Math.random() * (window.innerHeight - 50);
+      heart.style.left = x + 'px';
+      heart.style.top = y + 'px';
+      
+      // Añadir evento click para eliminar el corazón y actualizar el contador
+      heart.addEventListener('click', function() {
+        heart.remove();
+        clickedHearts++;
+        if (clickedHearts === totalHearts) {
+          showMessage();
+        }
+      });
+      
+      gameArea.appendChild(heart);
+    }
+
+    // Función para mostrar el mensaje secreto al terminar el juego
+    function showMessage() {
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.display = 'block';
+    }
+
+    // Generar todos los corazones
+    for (let i = 0; i < totalHearts; i++) {
+      createHeart();
+    }
+
+    // Actualizar el área de juego si se redimensiona la ventana
+    window.addEventListener('resize', function() {
+      gameArea.style.width = window.innerWidth + 'px';
+      gameArea.style.height = window.innerHeight + 'px';
+    });
+  </script>
+</body>
+</html>
