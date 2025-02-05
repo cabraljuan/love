@@ -92,21 +92,21 @@
     const heartsContainer = document.getElementById('heartsContainer');
     const messageDiv = document.getElementById('message');
     
-    // Array de recuerdos (experiencias)
+    // Arreglo de recuerdos (experiencias) con un tono más directo
     let remainingFrases = [
-      "Recuerdo el día que saltamos en los trampolines y luego exploramos el barrio chino.",
-      "Aquel día mágico en Candelaria, donde cada instante se sentía lleno de aventuras.",
-      "El día en que la lluvia se unió a la pileta para regalarnos momentos inolvidables.",
-      "La emoción de remar juntos en kayak, sintiendo la libertad del agua.",
-      "La primera vez que nos sumergimos en el universo de Arcane, compartiendo sorpresas.",
-      "Aquella noche en La Vicio, donde la música y nuestra complicidad nos envolvieron.",
-      "Recuerdo cómo nos relajamos en la plaza durante el cumple de Lalune, un instante de paz y alegría.",
-      "La cita en el cine para ver La Sustancia, donde cada escena se transformó en un recuerdo especial.",
-      "Los saltos y risas en 'Esunputiclu', una aventura divertida que siempre atesoraré.",
-      "El primer instante en que nuestras miradas se encontraron y todo cambió.",
-      "El día en que, con el alma en alto, visitamos la casa de Lala y Gaspi, llenos de historias.",
-      "La magia del cumple de Gaspi en Luján, una celebración repleta de sorpresas.",
-      "Aquel momento en que me ayudaste a grabar 'Ojitos de Clona', demostrando tu amor incondicional."
+      "El día que saltamos en los trampolines y exploramos el barrio chino.",
+      "El día en Candelaria, una jornada llena de aventuras.",
+      "El día que nos encontramos con la lluvia en la pileta, haciendo algo diferente.",
+      "La jornada en kayak, remar juntos por el agua.",
+      "La primera vez que vimos Arcane, una experiencia inesperada.",
+      "La noche en La Vicio, disfrutando buena música y compañía.",
+      "El día en la plaza durante el cumple de Lalune, un momento relajado y divertido.",
+      "La salida al cine para ver La Sustancia, una sesión que no olvidaré.",
+      "Los saltos y risas en 'Esunputiclu', pura diversión.",
+      "El día que estuvimos por primera vez.",
+      "El día en que, con Alma, visitamos la casa de Lala y Gaspi, con anécdotas para contar.",
+      "El cumple de Gaspi en Luján, lleno de sorpresas.",
+      "El momento en que me ayudaste a grabar 'Ojitos de Clona'."
     ];
     
     // Inicia el juego de corazones (ronda)
@@ -164,7 +164,6 @@
         } else {
           // Si ya se mostraron todos los recuerdos, mostrar el mensaje final
           messageDiv.textContent = "¡Te amo!";
-          // Ya no se reinicia el juego; removemos el listener
           messageDiv.removeEventListener('click', handleMessageClick);
         }
         messageDiv.style.opacity = "1";
@@ -176,17 +175,11 @@
     
     // Al tocar el mensaje, se reinicia el juego de corazones (si aún hay recuerdos)
     function handleMessageClick() {
-      // Removemos este listener para evitar llamadas duplicadas
       messageDiv.removeEventListener('click', handleMessageClick);
       if (remainingFrases.length > 0) {
         startHeartsGame();
       }
     }
-    
-    // Actualizar el área de juego al redimensionar la ventana (los corazones se mantienen en su lugar)
-    window.addEventListener('resize', function() {
-      // Si lo deseas, podrías reiniciar la ronda o ajustar posiciones, pero no es obligatorio.
-    });
     
     // Inicia el juego cuando se carga la página
     startHeartsGame();
