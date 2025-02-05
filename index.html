@@ -2,11 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <!-- Etiqueta viewport para dispositivos móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recuerdos Inolvidables</title>
-  <!-- Fuente moderna para un toque elegante -->
+  <!-- Fuente moderna -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
   <style>
-    /* Estilos generales modernos y elegantes */
+    /* Estilos generales */
     body {
       margin: 0;
       overflow: hidden;
@@ -14,7 +16,7 @@
       background: linear-gradient(135deg, #cfd9df, #e2ebf0);
       color: #333;
     }
-    /* Contenedor principal del juego */
+    /* Contenedor principal */
     #game {
       position: relative;
       width: 100vw;
@@ -27,8 +29,9 @@
       left: 0;
       width: 100%;
       height: 100%;
+      z-index: 1;
     }
-    /* Estilo para cada corazón */
+    /* Cada corazón */
     .heart {
       position: absolute;
       font-size: 2.5rem;
@@ -50,7 +53,7 @@
       padding: 10px 20px;
       border-radius: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      z-index: 100;
+      z-index: 1000;
     }
     /* Contenedor del mensaje/recuerdo */
     #message {
@@ -69,13 +72,27 @@
       line-height: 1.5;
       transition: opacity 0.5s ease;
       cursor: pointer;
-      z-index: 101;
-      white-space: pre-line; /* Para que respete los saltos de línea */
+      z-index: 1001;
+      white-space: pre-line;
+    }
+    /* Ajustes responsivos para móviles */
+    @media (max-width: 600px) {
+      .heart {
+        font-size: 2rem;
+      }
+      #instructions {
+        font-size: 1rem;
+        padding: 8px 15px;
+      }
+      #message {
+        font-size: 1.5rem;
+        padding: 20px 30px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Instrucciones para el juego -->
+  <!-- Caja de instrucciones -->
   <div id="instructions">
     Explotá todos los corazones para revivir un recuerdo especial...
   </div>
@@ -87,12 +104,13 @@
   </div>
   
   <script>
-    const totalHearts = 10; // Número de corazones en cada ronda
+    const totalHearts = 10; // Número de corazones por ronda
     let clickedHearts = 0;
     const heartsContainer = document.getElementById('heartsContainer');
     const messageDiv = document.getElementById('message');
+    const instructions = document.getElementById('instructions');
     
-    // Arreglo de recuerdos (experiencias) con un tono más directo
+    // Listado de recuerdos con tono directo (se mantiene "El día que estuvimos por primera vez." sin cambios)
     let remainingFrases = [
       "El día que saltamos en los trampolines y exploramos el barrio chino.",
       "El día en Candelaria, una jornada llena de aventuras.",
@@ -109,39 +127,47 @@
       "El momento en que me ayudaste a grabar 'Ojitos de Clona'."
     ];
     
-    // Inicia el juego de corazones (ronda)
+    // Inicia una nueva ronda de corazones
     function startHeartsGame() {
-      // Limpiar el contenedor de corazones y ocultar el mensaje
       heartsContainer.innerHTML = "";
       messageDiv.style.display = "none";
       clickedHearts = 0;
-      
-      // Crear la cantidad definida de corazones
+      // Generar la cantidad de corazones definida
       for (let i = 0; i < totalHearts; i++) {
         createHeart();
       }
     }
     
-    // Función para crear un corazón en una posición aleatoria
+    // Crea un corazón en una posición aleatoria, evitando el área de la caja de instrucciones
     function createHeart() {
       const heart = document.createElement('div');
       heart.classList.add('heart');
       heart.textContent = '❤️';
       
-      // Posición aleatoria (se resta un margen para que no se salga de la pantalla)
-      const x = Math.random() * (window.innerWidth - 50);
-      const y = Math.random() * (window.innerHeight - 50);
+      // Si las instrucciones están visibles, definimos un margen seguro en la parte superior
+      let safeMarginTop = 0;
+      if (instructions.style.display !== "none") {
+        safeMarginTop = instructions.clientHeight + 40; // instrucciones + espacio adicional
+      }
+      
+      const maxX = window.innerWidth - 50;
+      const maxY = window.innerHeight - 50;
+      const x = Math.random() * maxX;
+      const y = Math.random() * (maxY - safeMarginTop) + safeMarginTop;
+      
       heart.style.left = x + 'px';
       heart.style.top = y + 'px';
       
-      // Al hacer clic, el corazón se desvanece y se elimina
       heart.addEventListener('click', function() {
+        // Al hacer clic en el primer corazón, ocultamos la caja de instrucciones
+        if (instructions.style.display !== "none") {
+          instructions.style.display = "none";
+        }
         heart.style.opacity = '0';
         setTimeout(() => {
           heart.remove();
           clickedHearts++;
           if (clickedHearts === totalHearts) {
-            // Cuando se hayan explotado todos los corazones, mostramos un recuerdo
             showMemory();
           }
         }, 300);
@@ -150,7 +176,7 @@
       heartsContainer.appendChild(heart);
     }
     
-    // Función para mostrar un recuerdo aleatorio (y eliminarlo para que no se repita)
+    // Muestra un recuerdo aleatorio (eliminándolo para no repetirlo) o el mensaje final
     function showMemory() {
       messageDiv.style.display = "block";
       messageDiv.style.opacity = "0";
@@ -158,22 +184,19 @@
         if (remainingFrases.length > 0) {
           const randomIndex = Math.floor(Math.random() * remainingFrases.length);
           const phrase = remainingFrases[randomIndex];
-          // Eliminar la frase del arreglo para que no se vuelva a mostrar
           remainingFrases.splice(randomIndex, 1);
           messageDiv.textContent = phrase + "\n\n(Toca para explotar los corazones de nuevo)";
         } else {
-          // Si ya se mostraron todos los recuerdos, mostrar el mensaje final
           messageDiv.textContent = "¡Te amo!";
           messageDiv.removeEventListener('click', handleMessageClick);
         }
         messageDiv.style.opacity = "1";
       }, 500);
       
-      // Agregar event listener para reiniciar la ronda si hay más recuerdos
       messageDiv.addEventListener('click', handleMessageClick);
     }
     
-    // Al tocar el mensaje, se reinicia el juego de corazones (si aún hay recuerdos)
+    // Al tocar el mensaje, se reinicia la ronda de corazones (si quedan recuerdos)
     function handleMessageClick() {
       messageDiv.removeEventListener('click', handleMessageClick);
       if (remainingFrases.length > 0) {
@@ -181,7 +204,7 @@
       }
     }
     
-    // Inicia el juego cuando se carga la página
+    // Inicia el juego al cargar la página
     startHeartsGame();
   </script>
 </body>
