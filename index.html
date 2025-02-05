@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Momentos Inolvidables</title>
+  <title>Recuerdos Inolvidables</title>
   <!-- Fuente moderna para un toque elegante -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
   <style>
@@ -43,7 +43,7 @@
       border-radius: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    /* Contenedor de mensajes */
+    /* Contenedor del recuerdo/mensaje */
     #message {
       position: absolute;
       top: 50%;
@@ -59,33 +59,34 @@
       text-align: center;
       line-height: 1.5;
       transition: opacity 0.5s ease;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <!-- Instrucciones para comenzar la experiencia -->
   <div id="instructions">
-    Haz clic en todos los corazones para revivir nuestros mejores días...
+    Haz clic en todos los corazones para revivir un recuerdo especial...
   </div>
   
   <!-- Área de juego -->
   <div id="game">
-    <!-- Aquí se mostrarán las frases -->
+    <!-- Aquí se mostrarán los recuerdos -->
     <div id="message"></div>
   </div>
   
   <script>
-    // Configuración del juego
+    // Configuración inicial
     const totalHearts = 10; // Número total de corazones a encontrar
     let clickedHearts = 0;
     const gameArea = document.getElementById('game');
 
-    // Función para crear un corazón en una posición aleatoria
+    // Función para crear un corazón en posición aleatoria
     function createHeart() {
       const heart = document.createElement('div');
       heart.classList.add('heart');
       heart.textContent = '❤️';
-      // Posición aleatoria (se resta un margen para que no se salga de la pantalla)
+      // Calcular posición aleatoria (dejando un margen para que no se salga)
       const x = Math.random() * (window.innerWidth - 50);
       const y = Math.random() * (window.innerHeight - 50);
       heart.style.left = x + 'px';
@@ -98,7 +99,7 @@
           heart.remove();
           clickedHearts++;
           if (clickedHearts === totalHearts) {
-            showMessages();
+            initMemories();
           }
         }, 300);
       });
@@ -106,19 +107,19 @@
       gameArea.appendChild(heart);
     }
 
-    // Generar todos los corazones
+    // Generar los corazones
     for (let i = 0; i < totalHearts; i++) {
       createHeart();
     }
 
-    // Actualizar el área de juego si se redimensiona la ventana
+    // Actualizar el área de juego al redimensionar la ventana
     window.addEventListener('resize', function() {
       gameArea.style.width = window.innerWidth + 'px';
       gameArea.style.height = window.innerHeight + 'px';
     });
 
-    // Array de experiencias (frases)
-    const frases = [
+    // Arreglo de experiencias (recuerdos)
+    const remainingFrases = [
       "Recuerdo el día que saltamos en los trampolines y luego exploramos el barrio chino.",
       "Aquel día mágico en Candelaria, donde cada instante se sentía lleno de aventuras.",
       "El día en que la lluvia se unió a la pileta para regalarnos momentos inolvidables.",
@@ -134,35 +135,38 @@
       "Aquel momento en que me ayudaste a grabar 'Ojitos de Clona', demostrando tu amor incondicional."
     ];
 
-    // Función para mostrar y alternar las frases
-    function showMessages() {
+    // Inicializa la visualización de recuerdos
+    function initMemories() {
       const messageDiv = document.getElementById('message');
       messageDiv.style.display = 'block';
-      messageDiv.style.opacity = '1';
-      let index = 0;
-      messageDiv.textContent = frases[index];
-      
-      // Cambia la frase cada 3 segundos con efecto de desvanecimiento
-      const interval = setInterval(() => {
-        index++;
-        if (index < frases.length) {
-          messageDiv.style.opacity = '0';
-          setTimeout(() => {
-            messageDiv.textContent = frases[index];
-            messageDiv.style.opacity = '1';
-          }, 500);
+      showRandomMemory();
+      messageDiv.addEventListener('click', handleMemoryClick);
+    }
+
+    // Función que se dispara al tocar el recuadro de mensaje
+    function handleMemoryClick() {
+      showRandomMemory();
+    }
+
+    // Función para mostrar un recuerdo aleatorio y eliminarlo del arreglo
+    function showRandomMemory() {
+      const messageDiv = document.getElementById('message');
+      messageDiv.style.opacity = '0';
+      setTimeout(() => {
+        if (remainingFrases.length > 0) {
+          const randomIndex = Math.floor(Math.random() * remainingFrases.length);
+          const phrase = remainingFrases[randomIndex];
+          // Eliminar la frase para que no se repita
+          remainingFrases.splice(randomIndex, 1);
+          messageDiv.textContent = phrase + "\n\n(Toca para ver otro recuerdo)";
         } else {
-          // Una vez mostradas todas las frases, detiene el intervalo y muestra el mensaje final
-          clearInterval(interval);
-          setTimeout(() => {
-            messageDiv.style.opacity = '0';
-            setTimeout(() => {
-              messageDiv.textContent = "¡Te amo!";
-              messageDiv.style.opacity = '1';
-            }, 500);
-          }, 3000);
+          // Si ya se mostraron todos los recuerdos, mostrar el mensaje final
+          messageDiv.textContent = "¡Te amo!";
+          // Se elimina el event listener para que no se sigan mostrando cambios
+          messageDiv.removeEventListener('click', handleMemoryClick);
         }
-      }, 3000);
+        messageDiv.style.opacity = '1';
+      }, 500);
     }
   </script>
 </body>
